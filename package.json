@@ -1,0 +1,37 @@
+{
+  "name": "@foxycorps/squish",
+  "version": "0.1.0",
+  "description": "A minimalistic package bundler for TypeScript",
+  "bin": {
+    "squish": "./bin/squish"
+  },
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "files": [
+    "bin",
+    "install.js"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/foxycorps/squish.git"
+  },
+  "keywords": [
+    "typescript",
+    "bundler",
+    "esbuild",
+    "zero-config"
+  ],
+  "author": "FoxyCorps",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/foxycorps/squish/issues"
+  },
+  "homepage": "https://github.com/foxycorps/squish#readme",
+  "devDependencies": {
+    "node-fetch": "^3.2.0"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

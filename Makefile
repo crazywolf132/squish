@@ -18,7 +18,7 @@ PLATFORMS=darwin/amd64 darwin/arm64 linux/386 linux/amd64 linux/arm linux/arm64 
 all: test build
 
 build:
-	$(GOBUILD) -o $(BINARY_NAME) -v
+	$(GOBUILD) -o $(BINARY_NAME) -v ./cmd/squish
 
 test:
 	$(GOTEST) -v ./...
@@ -37,7 +37,7 @@ build-all: clean
 		$(eval EXTENSION=$(if $(filter windows,$(GOOS)),.exe))\
 		$(eval BINARY=$(BUILD_DIR)/$(BINARY_NAME)-$(GOOS)-$(GOARCH)$(EXTENSION))\
 		echo "Building for $(GOOS)/$(GOARCH)..." && \
-		GOOS=$(GOOS) GOARCH=$(GOARCH) $(GOBUILD) -o $(BINARY) -v \
+		GOOS=$(GOOS) GOARCH=$(GOARCH) $(GOBUILD) -o $(BINARY) -v ./cmd/squish\
 		&& if [ "$(GOOS)" = "linux" ]; then \
 			if [ "$(GOARCH)" = "amd64" ]; then \
 				cp $(BINARY) $(BUILD_DIR)/$(BINARY_NAME)-linux-x86_64; \
@@ -49,7 +49,7 @@ build-all: clean
 
 # Cross compilation for Unix
 build-unix:
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_UNIX) -v
+	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 $(GOBUILD) -o $(BINARY_UNIX) -v ./cmd/squish
 
 # Run the application
 run:

@@ -1,12 +1,13 @@
 {
   "name": "@foxycorps/squish",
-  "version": "0.1.0",
+  "version": "0.0.0",
   "description": "A minimalistic package bundler for TypeScript",
   "bin": {
     "squish": "./bin/squish"
   },
   "scripts": {
-    "postinstall": "node install.js"
+    "postinstall": "node install.js",
+    "semantic-release": "semantic-release"
   },
   "files": [
     "bin",
@@ -28,8 +29,14 @@
     "url": "https://github.com/foxycorps/squish/issues"
   },
   "homepage": "https://github.com/foxycorps/squish#readme",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
   "devDependencies": {
-    "node-fetch": "^3.2.0"
+    "@semantic-release/changelog": "^6.0.1",
+    "@semantic-release/exec": "^6.0.3",
+    "@semantic-release/git": "^10.0.1",
+    "semantic-release": "^19.0.3"
   },
   "engines": {
     "node": ">=14.0.0"

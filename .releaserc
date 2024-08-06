@@ -1,0 +1,20 @@
+{
+  "branches": ["main"],
+  "plugins": [
+    "@semantic-release/commit-analyzer",
+    "@semantic-release/release-notes-generator",
+    ["@semantic-release/changelog", {
+      "changelogFile": "CHANGELOG.md"
+    }],
+    ["@semantic-release/git", {
+      "assets": ["CHANGELOG.md", "package.json"],
+      "message": "chore(release): ${nextRelease.version} [skip ci]\n\n${nextRelease.notes}"
+    }],
+    ["@semantic-release/exec", {
+      "prepareCmd": "make build VERSION=${nextRelease.version}",
+      "publishCmd": "echo 'Binary version ${nextRelease.version} has been built'"
+    }],
+    "@semantic-release/github",
+    "@semantic-release/npm"
+  ]
+}

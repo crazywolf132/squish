@@ -3,6 +3,7 @@ package utils
 import (
 	"encoding/json"
 	"fmt"
+	"path/filepath"
 	"squish/internal/config"
 	"strings"
 )
@@ -23,14 +24,14 @@ type SourcePathResult struct {
 }
 
 func GetSourcePath(exportEntry config.ExportEntry, source, dist string) (*SourcePathResult, error) {
-	sourcePathUnresolved := source + exportEntry.OutputPath[len(dist):]
+	outputPath := exportEntry.OutputPath
 
 	for distExtension, sourceExts := range extensionMap {
-		if strings.HasSuffix(exportEntry.OutputPath, distExtension) {
-			sourcePath, err := tryExtensions(
-				sourcePathUnresolved[:len(sourcePathUnresolved)-len(distExtension)],
-				sourceExts,
-			)
+		if strings.HasSuffix(outputPath, distExtension) {
+			pathWithoutExtension := outputPath[:len(outputPath)-len(distExtension)]
+			sourcePathUnresolved := filepath.Join(source, pathWithoutExtension)
+
+			sourcePath, err := tryExtensions(sourcePathUnresolved, sourceExts)
 			if err == nil {
 				return &SourcePathResult{
 					Input:         sourcePath.path,
@@ -41,7 +42,7 @@ func GetSourcePath(exportEntry config.ExportEntry, source, dist string) (*Source
 		}
 	}
 
-	outputPathJSON, _ := json.Marshal(exportEntry.OutputPath)
+	outputPathJSON, _ := json.Marshal(outputPath)
 	return nil, fmt.Errorf("could not find matching source file for export path %s", string(outputPathJSON))
 }
 

@@ -35,7 +35,7 @@ This means you can focus on writing code, not configuring your build tool.
 To install Squish, you need to have Go installed on your system. Then, run:
 
 ```bash
-go get -u github.com/foxycorps/squish
+go get -u github.com/crazywolf132/squish
 ```
 
 ## Quick Start

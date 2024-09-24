@@ -8,6 +8,7 @@ import (
 	"squish/internal/utils"
 	"squish/pkg/esbuild"
 	"syscall"
+	"time"
 )
 
 type Watcher struct {
@@ -29,6 +30,9 @@ func (w *Watcher) Watch() error {
 	}
 	defer watcher.Close()
 
+	var rebuildTimer *time.Timer
+	debounceDuration := 100 * time.Millisecond
+
 	done := make(chan bool)
 	go func() {
 		for {
@@ -38,10 +42,15 @@ func (w *Watcher) Watch() error {
 					return
 				}
 				if event.Op&fsnotify.Write == fsnotify.Write {
-					utils.Log("Modified file:", event.Name)
-					if err := w.bundler.Bundle(); err != nil {
-						utils.Log("Error bundling:", err)
+					if rebuildTimer != nil {
+						rebuildTimer.Stop()
 					}
+					rebuildTimer = time.AfterFunc(debounceDuration, func() {
+						utils.Log("Detected changes, rebuilding...")
+						if err := w.bundler.Bundle(); err != nil {
+							utils.Log("Error bundling:", err)
+						}
+					})
 				}
 			case err, ok := <-watcher.Errors:
 				if !ok {

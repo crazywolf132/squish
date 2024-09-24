@@ -22,8 +22,9 @@ type BundlerConfig struct {
 }
 
 type Bundler struct {
-	config *BundlerConfig
-	pkg    *config.PackageJSON
+	config   *BundlerConfig
+	pkg      *config.PackageJSON
+	buildCtx *api.BuildContext
 }
 
 func NewBundler(config *BundlerConfig, pkg *config.PackageJSON) *Bundler {
@@ -102,6 +103,11 @@ func (b *Bundler) bundleEntry(sourcePath *utils.SourcePathResult, entry config.E
 		Plugins:           plugins,
 	}
 
+	ctx, err := api.Context(buildOptions)
+	if err != nil {
+		return err
+	}
+
 	if b.config.TsconfigPath != "" {
 		buildOptions.Tsconfig = b.config.TsconfigPath
 	}
@@ -110,7 +116,14 @@ func (b *Bundler) bundleEntry(sourcePath *utils.SourcePathResult, entry config.E
 		buildOptions.Conditions = b.config.ExportConditions
 	}
 
-	result := api.Build(buildOptions)
+	var result api.BuildResult
+
+	if b.buildCtx != nil {
+		result = ctx.Rebuild()
+	} else {
+		result = api.Build(buildOptions)
+		b.buildCtx = &ctx
+	}
 
 	if len(result.Errors) > 0 {
 		return fmt.Errorf("build failed for %s: %v", entry.OutputPath, result.Errors)
@@ -173,9 +186,6 @@ func (b *Bundler) getExternalDependencies() []string {
 		externals = append(externals, dep)
 	}
 	for dep := range b.pkg.PeerDependencies {
-		externals = append(externals, dep)
-	}
-	for dep := range b.pkg.DevDependencies {
 		externals = append(externals, dep)
 	}
 	return externals

@@ -3,10 +3,11 @@ package watcher
 import (
 	"github.com/fsnotify/fsnotify"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"squish/internal/utils"
-
 	"squish/pkg/esbuild"
+	"syscall"
 )
 
 type Watcher struct {
@@ -63,6 +64,16 @@ func (w *Watcher) Watch() error {
 	if err != nil {
 		return err
 	}
+
+	// Setup signal handling for graceful shutdown
+	signals := make(chan os.Signal, 1)
+	signal.Notify(signals, syscall.SIGINT, syscall.SIGTERM)
+
+	go func() {
+		<-signals
+		utils.Log("Received interrupt signal, shutting down watcher...")
+		close(done)
+	}()
 
 	utils.Log("Watching for changes in", w.srcDir)
 	<-done

@@ -65,9 +65,10 @@ func (b *Bundler) Bundle() error {
 }
 
 func (b *Bundler) bundleEntry(sourcePath *utils.SourcePathResult, entry config.ExportEntry) error {
+	outfile := filepath.Join(b.config.DistDir, entry.OutputPath)
 
 	// Ensure the output directory exists
-	if err := os.MkdirAll(filepath.Dir(entry.OutputPath), 0755); err != nil {
+	if err := os.MkdirAll(filepath.Dir(outfile), 0755); err != nil {
 		return fmt.Errorf("failed to create output directory: %w", err)
 	}
 
@@ -86,7 +87,7 @@ func (b *Bundler) bundleEntry(sourcePath *utils.SourcePathResult, entry config.E
 
 	buildOptions := api.BuildOptions{
 		EntryPoints:       []string{sourcePath.Input},
-		Outfile:           entry.OutputPath,
+		Outfile:           outfile,
 		Bundle:            true,
 		Write:             true,
 		Format:            b.getFormat(entry.Type),

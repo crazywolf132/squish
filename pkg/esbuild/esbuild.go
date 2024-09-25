@@ -101,6 +101,7 @@ func (b *Bundler) bundleEntry(sourcePath *utils.SourcePathResult, entry config.E
 		MinifyIdentifiers: b.config.Minify,
 		MinifySyntax:      b.config.Minify,
 		Plugins:           plugins,
+		TreeShaking:       api.TreeShakingTrue,
 	}
 
 	ctx, err := api.Context(buildOptions)

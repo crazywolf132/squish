@@ -2,8 +2,6 @@
 
 Squish is a minimalistic package bundler for TypeScript, built with Go. It's designed to be fast, efficient, and incredibly easy to use, with zero configuration required to get started.
 
-![Squish Logo](https://via.placeholder.com/150x150.png?text=Squish)
-
 ## Features
 
 - 🚀 Lightning-fast bundling

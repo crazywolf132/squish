@@ -7,6 +7,9 @@ import (
 	"path/filepath"
 	"squish/internal/config"
 	"squish/internal/utils"
+	"strings"
+
+	"github.com/fatih/color"
 )
 
 type BundlerConfig struct {
@@ -127,7 +130,12 @@ func (b *Bundler) bundleEntry(sourcePath *utils.SourcePathResult, entry config.E
 	}
 
 	if len(result.Errors) > 0 {
-		return fmt.Errorf("build failed for %s: %v", entry.OutputPath, result.Errors)
+		printBuildErrors(result.Errors)
+		return fmt.Errorf("build failed for %s", entry.OutputPath)
+	}
+
+	if len(result.Warnings) > 0 {
+		printBuildWarnings(result.Warnings)
 	}
 
 	return nil
@@ -213,4 +221,28 @@ func createEsbuildPlugin(p Plugin) api.Plugin {
 			}
 		},
 	}
+}
+
+func printBuildErrors(errors []api.Message) {
+	for _, err := range errors {
+		printBuildMessage("Error", err, color.FgRed)
+	}
+}
+
+func printBuildWarnings(warnings []api.Message) {
+	for _, warning := range warnings {
+		printBuildMessage("Warning", warning, color.FgYellow)
+	}
+}
+
+func printBuildMessage(msgType string, msg api.Message, colorAttr color.Attribute) {
+	c := color.New(colorAttr).Add(color.Bold)
+	c.Printf("%s: %s\n", msgType, msg.Text)
+	if msg.Location != nil {
+		fmt.Printf("File: %s:%d:%d\n", msg.Location.File, msg.Location.Line, msg.Location.Column)
+		fmt.Println(msg.Location.LineText)
+		underline := strings.Repeat(" ", msg.Location.Column) + strings.Repeat("^", msg.Location.Length)
+		fmt.Println(underline)
+	}
+	fmt.Println()
 }

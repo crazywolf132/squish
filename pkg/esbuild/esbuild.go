@@ -22,6 +22,7 @@ type BundlerConfig struct {
 	ExportConditions []string
 	Sourcemap        string
 	CleanDist        bool
+	Bundle           bool
 }
 
 type Bundler struct {
@@ -191,10 +192,15 @@ func (b *Bundler) getDefine() map[string]string {
 
 func (b *Bundler) getExternalDependencies() []string {
 	externals := make([]string, 0)
-	for dep := range b.pkg.Dependencies {
-		externals = append(externals, dep)
+	if !b.config.Bundle {
+		for dep := range b.pkg.Dependencies {
+			externals = append(externals, dep)
+		}
 	}
 	for dep := range b.pkg.PeerDependencies {
+		externals = append(externals, dep)
+	}
+	for dep := range b.pkg.DevDependencies {
 		externals = append(externals, dep)
 	}
 	return externals

@@ -22,6 +22,7 @@ var (
 	exportConditions []string
 	sourcemap        string
 	cleanDist        bool
+	bundle           bool
 )
 
 var rootCmd = &cobra.Command{
@@ -45,6 +46,7 @@ func init() {
 	rootCmd.Flags().StringSliceVar(&exportConditions, "export-condition", []string{}, "Export conditions for resolving dependency export and import maps")
 	rootCmd.Flags().StringVar(&sourcemap, "sourcemap", "", "Sourcemap generation. Provide 'inline' for inline sourcemap")
 	rootCmd.Flags().BoolVar(&cleanDist, "clean-dist", false, "Clean dist before bundling")
+	rootCmd.Flags().BoolVar(&bundle, "bundle", true, "Bundle all dependencies")
 }
 
 func run(cmd *cobra.Command, args []string) {
@@ -73,6 +75,7 @@ func run(cmd *cobra.Command, args []string) {
 		ExportConditions: exportConditions,
 		Sourcemap:        sourcemap,
 		CleanDist:        cleanDist,
+		Bundle:           bundle,
 	}
 
 	bundler := esbuild.NewBundler(bundlerConfig, pkg)
